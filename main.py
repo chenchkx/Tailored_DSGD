@@ -43,7 +43,7 @@ def main(args):
         model = load_model(args.model, input_size, classes).to(args.device)
         optimizer = SGD(model.parameters(), lr=args.lr, weight_decay=args.wd, momentum=args.momentum)
         # scheduler = MultiStepLR(optimizer, milestones=args.milestones, gamma=args.gamma)
-        scheduler = Warmup_MultiStepLR(optimizer, warmup_steps=300, milestones=args.milestones, gamma=args.gamma)
+        scheduler = Warmup_MultiStepLR(optimizer, warmup_steps=15, milestones=args.milestones, gamma=args.gamma)
 
         worker = Worker_Vision(model, rank, optimizer, scheduler, train_loader, args.device)
         worker_list.append(worker)
