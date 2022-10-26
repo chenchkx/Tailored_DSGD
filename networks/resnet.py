@@ -268,9 +268,10 @@ def _resnet(
         import copy
         model_dict = copy.deepcopy(model.state_dict())
         for name, param in state_dict.items():
-            # if name in ['fc.weight', 'fc.bias', 'conv1.weight', 'bn1.weight', 'bn1.bias', 'bn1.running_mean', 'bn1.running_var']:
-            # if name in ['fc.weight', 'fc.bias', 'bn1.weight', 'bn1.bias', 'bn1.running_mean', 'bn1.running_var']:
-            if name in ['fc.weight', 'fc.bias']:
+            if name in ['conv1.weight']:
+                # continue
+                model_dict[name] =  state_dict[name]
+            elif name in ['fc.weight', 'fc.bias', 'bn1.weight', 'bn1.bias', 'bn1.running_mean', 'bn1.running_var']:
                 continue
             else:
                 model_dict[name] =  state_dict[name]
