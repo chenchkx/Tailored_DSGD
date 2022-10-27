@@ -270,7 +270,7 @@ def _resnet(
         for name, param in state_dict.items():
             if name in ['conv1.weight']:
                 # continue
-                model_dict[name] = state_dict[name] + 0.1*torch.randn_like(state_dict[name])
+                model_dict[name] = state_dict[name] + torch.std(state_dict[name])*torch.randn_like(state_dict[name])
             elif name in ['fc.weight', 'fc.bias', 'bn1.weight', 'bn1.bias', 'bn1.running_mean', 'bn1.running_var']:
                 continue
             else:
