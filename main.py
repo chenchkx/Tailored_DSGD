@@ -43,7 +43,7 @@ def main(args):
         model = load_model(args.model, input_size, classes).to(args.device)
         optimizer = SGD(model.parameters(), lr=args.lr, weight_decay=args.wd, momentum=args.momentum)
         # scheduler = MultiStepLR(optimizer, milestones=args.milestones, gamma=args.gamma)
-        scheduler = Warmup_MultiStepLR(optimizer, warmup_steps=15, milestones=args.milestones, gamma=args.gamma)
+        scheduler = Warmup_MultiStepLR(optimizer, warmup_step=args.warmup_step, milestones=args.milestones, gamma=args.gamma)
 
         worker = Worker_Vision(model, rank, optimizer, scheduler, train_loader, args.device)
         worker_list.append(worker)
@@ -91,7 +91,8 @@ def main(args):
                 model_dict[name] = param/args.size
             center_model.load_state_dict(model_dict)
             
-            if iteration % 100 == 0:    
+            # print(worker.optimizer.state_dict()['param_groups'][0]['lr']) # test warmup lr
+            if iteration % 100 == 0 or (iteration % 50 == 0 and iteration<= 1000):    
                 start_time = datetime.datetime.now() 
                 eval_iteration = iteration
                 train_acc, train_loss, valid_acc, valid_loss = eval_vision(center_model, probe_train_loader, probe_valid_loader,
@@ -126,7 +127,7 @@ if __name__=='__main__':
     parser.add_argument("--dataset_path", type=str, default='datasets')
     parser.add_argument("--dataset_name", type=str, default='TinyImageNet',
                                             choices=['CIFAR10','TinyImageNet'])
-    parser.add_argument("--image_size", type=int, default=56, help='input image size')
+    parser.add_argument("--image_size", type=int, default=64, help='input image size')
     parser.add_argument("--batch_size", type=int, default=32)
     parser.add_argument('--n_swap', type=int, default=None)
 
@@ -137,13 +138,14 @@ if __name__=='__main__':
     parser.add_argument('--port', type=int, default=29500)
     parser.add_argument('--backend', type=str, default="gloo")
     # deep model parameter
-    parser.add_argument('--model', type=str, default='ResNet18', choices=['ResNet18', 'AlexNet', 'DenseNet'])
+    parser.add_argument('--model', type=str, default='AlexNet', choices=['ResNet18', 'AlexNet', 'DenseNet'])
 
     # optimization parameter
     parser.add_argument('--lr', type=float, default=0.01, help='learning rate')
     parser.add_argument('--wd', type=float, default=0.0,  help='weight decay')
     parser.add_argument('--gamma', type=float, default=0.1)
     parser.add_argument('--momentum', type=float, default=0.0)
+    parser.add_argument('--warmup_step', type=int, default=15)
     parser.add_argument('--epoch', type=int, default=6000)
     parser.add_argument('--early_stop', type=int, default=6000, help='w.r.t., iterations')
     parser.add_argument('--milestones', type=int, nargs='+', default=[2400, 4800])
