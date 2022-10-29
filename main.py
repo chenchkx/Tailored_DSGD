@@ -139,7 +139,7 @@ if __name__=='__main__':
     parser.add_argument('--port', type=int, default=29500)
     parser.add_argument('--backend', type=str, default="gloo")
     # deep model parameter
-    parser.add_argument('--model', type=str, default='AlexNet', choices=['ResNet18', 'AlexNet', 'DenseNet'])
+    parser.add_argument('--model', type=str, default='ResNet18', choices=['ResNet18', 'AlexNet', 'DenseNet'])
 
     # optimization parameter
     parser.add_argument('--lr', type=float, default=0.01, help='learning rate')
