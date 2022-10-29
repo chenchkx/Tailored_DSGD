@@ -269,9 +269,9 @@ def _resnet(
         model_dict = copy.deepcopy(model.state_dict())
         for name, param in state_dict.items():
             if name in ['conv1.weight']:
-                continue
+                # continue
                 # model_dict[name] = model_dict[name] + (torch.std(model_dict[name])/torch.std(param))*param
-                # model_dict[name] = param + torch.std(param)*torch.randn_like(param)
+                model_dict[name] = param + 0.1*torch.randn_like(param)
             elif name in ['fc.weight', 'fc.bias', 'bn1.weight', 'bn1.bias', 'bn1.running_mean', 'bn1.running_var']:
                 continue
             else:

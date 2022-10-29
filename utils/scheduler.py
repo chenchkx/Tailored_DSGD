@@ -15,10 +15,10 @@ class Warmup_MultiStepLR(LambdaLR):
 
     def lr_warmup(self, step):
         # linear warmup
-        # lr_rate = (float(step) / float(max(1, self.warmup_step)))*(1-self.init_rate) + self.init_rate
-        # sine warm up
-        progress = float(step) / float(max(1, self.warmup_step))
-        lr_rate = math.sin(math.pi * float(0.5) * progress)
+        lr_rate = (float(step) / float(max(1, self.warmup_step)))*(1-self.init_rate) + self.init_rate
+        # # sine warm up
+        # progress = float(step) / float(max(1, self.warmup_step))
+        # lr_rate = math.sin(math.pi * float(0.5) * progress)
         return lr_rate
     
     def lr_decay(self, step):
