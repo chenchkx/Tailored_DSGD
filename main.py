@@ -92,7 +92,8 @@ def main(args):
             center_model.load_state_dict(model_dict)
             
             # print(worker.optimizer.state_dict()['param_groups'][0]['lr']) # test warmup lr
-            if iteration % 100 == 0 or (iteration % 50 == 0 and iteration<= 1000):    
+            # if iteration % 100 == 0 or (iteration % 50 == 0 and iteration<= 1000): 
+            if iteration % 150 == 0:     
                 start_time = datetime.datetime.now() 
                 eval_iteration = iteration
                 train_acc, train_loss, valid_acc, valid_loss = eval_vision(center_model, probe_train_loader, probe_valid_loader,

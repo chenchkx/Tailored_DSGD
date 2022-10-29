@@ -71,7 +71,8 @@ def alexnet(pretrained: bool = False, progress: bool = True, **kwargs: Any) -> A
         model_dict = copy.deepcopy(model.state_dict())
         for name, param in state_dict.items():
             if name in ['features.0.weight', 'features.0.bias']:
-                model_dict[name] = state_dict[name] + torch.std(state_dict[name])*torch.randn_like(state_dict[name])
+                model_dict[name] = model_dict[name] + (torch.std(model_dict[name])/torch.std(param))*param
+                # model_dict[name] = state_dict[name] + torch.std(state_dict[name])*torch.randn_like(state_dict[name])
             elif name in ['classifier.6.weight', 'classifier.6.bias']:
                 continue
             else:
