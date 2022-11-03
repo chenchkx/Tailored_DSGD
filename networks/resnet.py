@@ -170,9 +170,7 @@ class ResNet(nn.Module):
                              "or a 3-element tuple, got {}".format(replace_stride_with_dilation))
         self.groups = groups
         self.base_width = width_per_group
-        # tailored resnet for small size input, re-define the first convolution
-        # self.conv1 = nn.Conv2d(3, self.inplanes, kernel_size=3, stride=1, padding=1,
-        #                        bias=False)
+        # tailored resnet for small size input, re-define the first convolution and first maxpooling
         self.conv1 = nn.Conv2d(3, self.inplanes, kernel_size=7, stride=1, padding=3,
                                bias=False) # stride: 2->1
         self.bn1 = norm_layer(self.inplanes)
