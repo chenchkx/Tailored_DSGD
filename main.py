@@ -128,7 +128,7 @@ if __name__=='__main__':
     parser.add_argument("--dataset_path", type=str, default='datasets')
     parser.add_argument("--dataset_name", type=str, default='TinyImageNet',
                                             choices=['CIFAR10','TinyImageNet'])
-    parser.add_argument("--image_size", type=int, default=32, help='input image size')
+    parser.add_argument("--image_size", type=int, default=56, help='input image size')
     parser.add_argument("--batch_size", type=int, default=512)
     parser.add_argument('--n_swap', type=int, default=None)
 
@@ -139,7 +139,7 @@ if __name__=='__main__':
     parser.add_argument('--port', type=int, default=29500)
     parser.add_argument('--backend', type=str, default="gloo")
     # deep model parameter
-    parser.add_argument('--model', type=str, default='AlexNet', choices=['ResNet18', 'AlexNet', 'DenseNet121'])
+    parser.add_argument('--model', type=str, default='DenseNet121', choices=['ResNet18', 'AlexNet', 'DenseNet121'])
 
     # optimization parameter
     parser.add_argument('--lr', type=float, default=0.01, help='learning rate')
@@ -151,7 +151,7 @@ if __name__=='__main__':
     parser.add_argument('--early_stop', type=int, default=6000, help='w.r.t., iterations')
     parser.add_argument('--milestones', type=int, nargs='+', default=[2400, 4800])
     parser.add_argument('--seed', type=int, default=777)
-    parser.add_argument("--device", type=int, default=2)
+    parser.add_argument("--device", type=int, default=0)
     args = parser.parse_args()
  
     args = add_identity(args, dir_path)
