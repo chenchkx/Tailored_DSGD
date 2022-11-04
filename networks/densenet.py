@@ -260,11 +260,12 @@ def _densenet(
         pattern = re.compile(
             r'^(.*denselayer\d+\.(?:norm|relu|conv))\.((?:[12])\.(?:weight|bias|running_mean|running_var))$')
         for key in list(state_dict.keys()):
-            if key in ['features.conv0.weight', 'features.norm0.weight', 'features.norm0.bias', 'features.norm0.running_mean', 'features.norm0.running_var',
-                        'classifier.weight', 'classifier.bias']:
-                continue
             res = pattern.match(key)
-            if res:
+            if key in ['features.conv0.weight', 'features.norm0.weight', 'features.norm0.bias', 'features.norm0.running_mean', 'features.norm0.running_var']:
+                model_dict[key] = state_dict[key].resize_(model_dict[key].size())
+            elif key in ['classifier.weight', 'classifier.bias']:
+                continue
+            elif res:
                 new_key = res.group(1) + res.group(2)
                 model_dict[new_key] = state_dict[key].resize_(model_dict[new_key].size())
                 del state_dict[key]
@@ -283,8 +284,8 @@ def densenet121(pretrained: bool = False, progress: bool = True, **kwargs: Any) 
         memory_efficient (bool) - If True, uses checkpointing. Much more memory efficient,
           but slower. Default: *False*. See `"paper" <https://arxiv.org/pdf/1707.06990.pdf>`_.
     """
-    return _densenet('densenet121', 12, (6, 12, 24, 16), 24, pretrained, progress,
-                     **kwargs)
+    return _densenet('densenet121', 12, (6, 12, 24, 16), 64, pretrained, progress,
+                     **kwargs) # growth_rate: 32->12
 
 
 def densenet161(pretrained: bool = False, progress: bool = True, **kwargs: Any) -> DenseNet:

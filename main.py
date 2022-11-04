@@ -63,6 +63,15 @@ def main(args):
                     worker.model.load_state_dict(center_model.state_dict())
                     worker.step()
                     worker.update_grad()
+
+                model_dict = center_model.state_dict()
+                for name, param in model_dict.items():
+                    param = torch.zeros_like(param)
+                    for worker in worker_list:
+                        param = param + worker.model.state_dict()[name]
+                    model_dict[name] = param/args.size
+                center_model.load_state_dict(model_dict)
+
             else: # dsgd
                 # 每个iteration，传播矩阵P中的worker做random shuffle（自己的邻居在下一个iteration时改变）
                 if args.shuffle == "random":
@@ -81,22 +90,23 @@ def main(args):
                             param.data += model_dict_list[i][name].data * p
                     # worker.step() # 效果会变差
                     worker.update_grad()
-
-            # 此处，取了全部模型的均值的中心模型 用于评估performance
-            model_dict = center_model.state_dict()
-            for name, param in model_dict.items():
-                param = torch.zeros_like(param)
-                for worker in worker_list:
-                    param = param + worker.model.state_dict()[name]
-                model_dict[name] = param/args.size
-            center_model.load_state_dict(model_dict)
-            
+                
             # print(worker.optimizer.state_dict()['param_groups'][0]['lr']) # test warmup lr
             # if iteration % 100 == 0 or (iteration % 50 == 0 and iteration<= 1000): 
-            if iteration % 150 == 0:     
+            if iteration % 150 == 0:    
+                # 此处，取了全部模型的均值的中心模型 用于评估performance
+                eval_model = copy.deepcopy(center_model)
+                eval_model_dict = center_model.state_dict()
+                for name, param in eval_model_dict.items():
+                    param = torch.zeros_like(param)
+                    for worker in worker_list:
+                        param = param + worker.model.state_dict()[name]
+                    eval_model_dict[name] = param/args.size
+                eval_model.load_state_dict(eval_model_dict)
+
                 start_time = datetime.datetime.now() 
                 eval_iteration = iteration
-                train_acc, train_loss, valid_acc, valid_loss = eval_vision(center_model, probe_train_loader, probe_valid_loader,
+                train_acc, train_loss, valid_acc, valid_loss = eval_vision(eval_model, probe_train_loader, probe_valid_loader,
                                                                             None, iteration, writer, args.device)
                 print(f"\n|\033[0;31m Iteration:{iteration}|{args.early_stop}, epoch: {epoch}|{args.epoch},\033[0m",
                         f'train loss:{train_loss:.4}, acc:{train_acc:.4%}, '
@@ -133,25 +143,25 @@ if __name__=='__main__':
     parser.add_argument('--n_swap', type=int, default=None)
 
     # mode parameter
-    parser.add_argument('--mode', type=str, default='csgd', choices=['csgd', 'ring'])
+    parser.add_argument('--mode', type=str, default='ring', choices=['csgd', 'ring'])
     parser.add_argument('--shuffle', type=str, default="fixed", choices=['fixed', 'random'])
     parser.add_argument('--size', type=int, default=16)
     parser.add_argument('--port', type=int, default=29500)
     parser.add_argument('--backend', type=str, default="gloo")
     # deep model parameter
-    parser.add_argument('--model', type=str, default='DenseNet121', choices=['ResNet18', 'AlexNet', 'DenseNet121'])
+    parser.add_argument('--model', type=str, default='AlexNet', choices=['ResNet18', 'AlexNet', 'DenseNet121'])
 
     # optimization parameter
     parser.add_argument('--lr', type=float, default=0.01, help='learning rate')
     parser.add_argument('--wd', type=float, default=0.0,  help='weight decay')
     parser.add_argument('--gamma', type=float, default=0.1)
-    parser.add_argument('--momentum', type=float, default=0.0)
+    parser.add_argument('--momentum', type=float, default=0.0) 
     parser.add_argument('--warmup_step', type=int, default=15)
     parser.add_argument('--epoch', type=int, default=6000)
     parser.add_argument('--early_stop', type=int, default=6000, help='w.r.t., iterations')
     parser.add_argument('--milestones', type=int, nargs='+', default=[2400, 4800])
     parser.add_argument('--seed', type=int, default=777)
-    parser.add_argument("--device", type=int, default=0)
+    parser.add_argument("--device", type=int, default=1)
     args = parser.parse_args()
  
     args = add_identity(args, dir_path)

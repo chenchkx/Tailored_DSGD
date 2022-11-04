@@ -47,7 +47,9 @@ class AlexNet(nn.Module):
         # self.avgpool = nn.AdaptiveAvgPool2d((1, 1))
         # self.classifier = nn.Linear(256, num_classes)
         self.features = nn.Sequential(
-            nn.Conv2d(3, 64, kernel_size=11, stride=1, padding=2), # kernel_size: 11->7, stride: 4->1
+            nn.Conv2d(3, 64, kernel_size=11, stride=1, padding=3), # kernel_size: 11->7, stride: 4->1
+            # nn.Conv2d(3, 64, kernel_size=7, stride=1, padding=3), # kernel_size: 11->7, stride: 4->1
+            nn.BatchNorm2d(64),
             nn.ReLU(inplace=True),
             nn.MaxPool2d(kernel_size=3, stride=2), # stride: 2->1
             nn.Conv2d(64, 192, kernel_size=5, padding=2),
@@ -57,13 +59,12 @@ class AlexNet(nn.Module):
             # nn.BatchNorm2d(384),
             nn.ReLU(inplace=True),
             nn.Conv2d(384, 256, kernel_size=3, padding=1),
-            # nn.BatchNorm2d(256),
+            nn.BatchNorm2d(256),
             nn.ReLU(inplace=True),
             nn.Conv2d(256, 256, kernel_size=3, padding=1),
-            # nn.BatchNorm2d(256),
+            nn.BatchNorm2d(256),
             nn.ReLU(inplace=True),
             nn.MaxPool2d(kernel_size=3, stride=2),
-            nn.BatchNorm2d(256),
         )
         self.avgpool = nn.AdaptiveAvgPool2d((1, 1))
         self.classifier = nn.Linear(256, num_classes)
@@ -103,25 +104,29 @@ def alexnet(pretrained: bool = False, progress: bool = True, **kwargs: Any) -> A
         import copy
         model_dict = copy.deepcopy(model.state_dict())
         for name, param in state_dict.items():
-            # if name in ['features.0.weight', 'features.0.bias']:
-            #     model_dict[name] = param + torch.std(param)*torch.randn_like(param)
+            # if name in ['features.0.weight']:
+            #     with torch.no_grad():
+            #         model_dict[name] = state_dict[name].clone().resize_(model_dict[name].size())
             #     # continue
-            # if name in ['features.3.weight']:
-            #     model_dict['features.3.weight'] =  param
-            # elif name in ['features.6.weight']:
-            #     model_dict['features.6.weight'] =  param
-            # elif name in ['features.8.weight']:
-            #     model_dict['features.9.weight'] =  param
-            # elif name in ['features.10.weight']:
-            #     model_dict['features.12.weight'] =  param
-            # elif name in ['features.3.bias']:
-            #     model_dict['features.3.bias'] =  param
-            # elif name in ['features.6.bias']:
-            #     model_dict['features.6.bias'] =  param
-            # elif name in ['features.8.bias']:
-            #     model_dict['features.9.bias'] =  param
-            # elif name in ['features.10.bias']:
-            #     model_dict['features.12.bias'] =  param
+            # elif name in ['features.0.bias']:
+            #     continue
+                # continue
+            if name in ['features.3.weight']:
+                model_dict['features.4.weight'] =  param
+            elif name in ['features.6.weight']:
+                model_dict['features.7.weight'] =  param
+            elif name in ['features.8.weight']:
+                model_dict['features.9.weight'] =  param
+            elif name in ['features.10.weight']:
+                model_dict['features.12.weight'] =  param
+            elif name in ['features.3.bias']:
+                model_dict['features.4.bias'] =  param
+            elif name in ['features.6.bias']:
+                model_dict['features.7.bias'] =  param
+            elif name in ['features.8.bias']:
+                model_dict['features.9.bias'] =  param
+            elif name in ['features.10.bias']:
+                model_dict['features.12.bias'] =  param
 
             # if name in ['classifier.1.weight']:
             #     model_dict['classifier.1.weight'] =  param
@@ -152,7 +157,7 @@ def alexnet(pretrained: bool = False, progress: bool = True, **kwargs: Any) -> A
                 # model_dict[name] = state_dict[name] + torch.std(state_dict[name])*torch.randn_like(state_dict[name])
             # elif name in ['classifier.6.weight', 'classifier.6.bias']:
             #     continue
-            if 'classifier' in name:
+            elif 'classifier' in name:
                 continue
             else:
                 model_dict[name] =  param
