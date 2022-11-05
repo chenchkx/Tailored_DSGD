@@ -136,7 +136,7 @@ if __name__=='__main__':
     parser = argparse.ArgumentParser()
     ## dataset
     parser.add_argument("--dataset_path", type=str, default='datasets')
-    parser.add_argument("--dataset_name", type=str, default='TinyImageNet',
+    parser.add_argument("--dataset_name", type=str, default='CIFAR10',
                                             choices=['CIFAR10','TinyImageNet'])
     parser.add_argument("--image_size", type=int, default=56, help='input image size')
     parser.add_argument("--batch_size", type=int, default=512)
@@ -149,7 +149,7 @@ if __name__=='__main__':
     parser.add_argument('--port', type=int, default=29500)
     parser.add_argument('--backend', type=str, default="gloo")
     # deep model parameter
-    parser.add_argument('--model', type=str, default='AlexNet', choices=['ResNet18', 'AlexNet', 'DenseNet121'])
+    parser.add_argument('--model', type=str, default='DenseNet121', choices=['ResNet18', 'AlexNet', 'DenseNet121'])
 
     # optimization parameter
     parser.add_argument('--lr', type=float, default=0.01, help='learning rate')
