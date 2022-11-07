@@ -3,6 +3,7 @@ import torchvision.models
 from .alexnet import *
 from .densenet import *
 from .resnet import *
+from .vgg import *
 
 
 
@@ -15,6 +16,8 @@ def load_model(name, inputsize, outputsize):
         model = alexnet(num_classes=outputsize, pretrained=True)
     if name.lower() == "densenet121":
         model = densenet121(num_classes=outputsize, pretrained=True)
+    if name.lower() == 'vgg11_bn':
+        model = vgg11_bn(num_classes=outputsize, pretrained=True)
 
     return model
 
