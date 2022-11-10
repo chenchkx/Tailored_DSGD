@@ -17,7 +17,12 @@ def load_model(name, inputsize, outputsize):
     if name.lower() == "densenet121":
         model = densenet121(num_classes=outputsize, pretrained=True)
     if name.lower() == 'vgg11_bn':
-        model = vgg11_bn(num_classes=outputsize, pretrained=True)
+        model = vgg11_bn(num_classes=outputsize, pretrained=False)
+    if name.lower() == 'vgg11':
+        model = vgg11(num_classes=outputsize, pretrained=True)
+    if name.lower() == 'vgg13_bn':
+        model = vgg13_bn(num_classes=outputsize, pretrained=True)
+
 
     return model
 
