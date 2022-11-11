@@ -33,17 +33,17 @@ class VGG(nn.Module):
         super(VGG, self).__init__()
         self.features = features
         self.avgpool = nn.AdaptiveAvgPool2d((1, 1))
-        # self.classifier = nn.Linear(512, num_classes)
+        self.classifier = nn.Linear(512, num_classes)
         # self.avgpool = nn.AdaptiveAvgPool2d((7, 7))
-        self.classifier = nn.Sequential(
-            nn.Linear(512, 512),
-            nn.ReLU(True),
-            nn.Dropout(),
-            nn.Linear(512, 512),
-            nn.ReLU(True),
-            nn.Dropout(),
-            nn.Linear(512, num_classes),
-        )
+        # self.classifier = nn.Sequential(
+        #     nn.Linear(512, 256),
+        #     nn.ReLU(True),
+        #     nn.Dropout(),
+        #     nn.Linear(256, 256),
+        #     nn.ReLU(True),
+        #     nn.Dropout(),
+        #     nn.Linear(256, num_classes),
+        # )
         if init_weights:
             self._initialize_weights()
 
@@ -107,9 +107,9 @@ def _vgg(arch: str, cfg: str, batch_norm: bool, pretrained: bool, progress: bool
         for name, param in state_dict.items():
             if 'classifier' in name:
                 continue
-            # elif name in ['features.0.weight']:
-            #     # model_dict[name] = param + torch.std(param)*torch.randn_like(param)
-            #     continue
+            elif name in ['features.0.weight','features.1.weight']:
+                model_dict[name] = param + 0.01*torch.randn_like(param)
+                # continue
             else:
                 model_dict[name] =  param
         model.load_state_dict(model_dict)
