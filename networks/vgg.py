@@ -88,7 +88,7 @@ def make_layers(cfg: List[Union[str, int]], batch_norm: bool = False) -> nn.Sequ
 
 
 cfgs: Dict[str, List[Union[str, int]]] = {
-    'A': [64, 'M1', 128, 'M1', 256, 256, 'M', 512, 512, 'M', 512, 512, 'M'],
+    'A': [64, 'M1', 128, 'M', 256, 256, 'M', 512, 512, 'M', 512, 512, 'M'],
     'B': [64, 64, 'M1', 128, 128, 'M1', 256, 256, 'M', 512, 512, 'M', 512, 512, 'M'],
     'D': [64, 64, 'M1', 128, 128, 'M1', 256, 256, 256, 'M', 512, 512, 512, 'M', 512, 512, 512, 'M'],
     'E': [64, 64, 'M1', 128, 128, 'M1', 256, 256, 256, 256, 'M', 512, 512, 512, 512, 'M', 512, 512, 512, 512, 'M'],
@@ -107,9 +107,9 @@ def _vgg(arch: str, cfg: str, batch_norm: bool, pretrained: bool, progress: bool
         for name, param in state_dict.items():
             if 'classifier' in name:
                 continue
-            elif name in ['features.0.weight','features.1.weight']:
-                model_dict[name] = param + 0.01*torch.randn_like(param)
-                # continue
+            # elif name in ['features.0.weight']:
+            #     # model_dict[name] = param + 0.01*torch.randn_like(param)
+            #     continue
             else:
                 model_dict[name] =  param
         model.load_state_dict(model_dict)

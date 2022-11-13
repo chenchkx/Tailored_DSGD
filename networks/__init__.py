@@ -23,7 +23,6 @@ def load_model(name, inputsize, outputsize):
     if name.lower() == 'vgg13_bn':
         model = vgg13_bn(num_classes=outputsize, pretrained=True)
 
-
     return model
 
 

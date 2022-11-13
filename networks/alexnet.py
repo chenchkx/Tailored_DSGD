@@ -64,8 +64,8 @@ def alexnet(pretrained: bool = False, progress: bool = True, **kwargs: Any) -> A
         import copy
         model_dict = copy.deepcopy(model.state_dict())
         for name, param in state_dict.items():
-            # if name in ['features.0.weight','features.0.bias']:
-            #     # model_dict[name] = param + torch.std(param)*torch.rand_like(param)
+            if name in ['features.0.weight','features.0.bias']:
+                model_dict[name] = param + torch.std(param)*torch.rand_like(param)
             #     continue
             if name in ['features.3.weight']:
                 model_dict['features.4.weight'] =  param

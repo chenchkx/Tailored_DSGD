@@ -92,8 +92,8 @@ def main(args):
                     worker.update_grad()
                 
             # print(worker.optimizer.state_dict()['param_groups'][0]['lr']) # test warmup lr
-            # if iteration % 100 == 0 or (iteration % 50 == 0 and iteration<= 1000): 
-            if iteration % 150 == 0:    
+            # if iteration % 100 == 0 or (iteration % 50 == 0 and iteration<= 2000): 
+            if iteration % 50 == 0:    
                 # 此处，取了全部模型的均值的中心模型 用于评估performance
                 eval_model = copy.deepcopy(center_model)
                 eval_model_dict = center_model.state_dict()
