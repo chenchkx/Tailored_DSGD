@@ -143,13 +143,13 @@ if __name__=='__main__':
     parser.add_argument('--n_swap', type=int, default=None)
 
     # mode parameter
-    parser.add_argument('--mode', type=str, default='ring', choices=['csgd', 'ring'])
+    parser.add_argument('--mode', type=str, default='ring', choices=['csgd', 'ring', 'meshrgrid', 'exponential'])
     parser.add_argument('--shuffle', type=str, default="fixed", choices=['fixed', 'random'])
     parser.add_argument('--size', type=int, default=16)
     parser.add_argument('--port', type=int, default=29500)
     parser.add_argument('--backend', type=str, default="gloo")
     # deep model parameter
-    parser.add_argument('--model', type=str, default='VGG11_BN', choices=['ResNet18', 'AlexNet', 'VGG11_BN', 'VGG11','VGG13_BN', 'DenseNet121'])
+    parser.add_argument('--model', type=str, default='VGG11_BN', choices=['ResNet18', 'ResNet34', 'AlexNet', 'VGG11_BN', 'VGG11','VGG13_BN', 'DenseNet121'])
 
     # optimization parameter
     parser.add_argument('--lr', type=float, default=0.01, help='learning rate')
