@@ -122,7 +122,7 @@ def main(args):
     state = {
         'acc': train_acc,
         'epoch': epoch,
-        'state_dict': center_model.state_dict() 
+        'state_dict': eval_model.state_dict() 
     }    
     if not os.path.exists(args.perf_dict_dir):
         os.mkdir(args.perf_dict_dir)  
